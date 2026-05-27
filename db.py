@@ -6,7 +6,11 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 # Configuración de conexión dinámica para Docker
 # Si corre dentro de Docker usará 'postgres_db', si lo pruebas suelto usará 'localhost'
 DB_HOST = os.getenv("DB_HOST", "localhost")
-DATABASE_URL = f"postgresql://postgres:password_seguro@{DB_HOST}:5432/guarderia_db"
+
+if DB_HOST.startswith("postgresql://") or DB_HOST.startswith("postgres://"):
+    DATABASE_URL = DB_HOST
+else:
+    DATABASE_URL = f"postgresql://postgres:password_seguro@{DB_HOST}:5432/guarderia_db"
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
